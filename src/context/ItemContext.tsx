@@ -56,56 +56,61 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   // add item
-  const addItem = (newItem: ItemsInput) => {
-    api
-      .post("/posts", newItem)
-      .then((response) => {
-        const addedItem = {
-          ...response.data,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        setItems((prev) => [...prev, addedItem]);
-        //show success message
-        toast.success("New Item added successfully");
-      })
-
-      .catch(() => {
-        setError("Failed to add item");
-        toast.error("Error: Failed to add item");
-      });
+  const addItem = async (newItem: ItemsInput) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await api.post("/posts", newItem);
+      const addedItem = {
+        ...response.data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      setItems((prev) => [...prev, addedItem]);
+      toast.success("New item added successfully!");
+    } catch (err) {
+      setError("Failed to add item.");
+      toast.error("Error: Failed to add item.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // delete item
-  const deleteItem = (id: number) => {
-    api
-      .delete(`/posts/${id}`)
-      .then(() => {
-        setItems((prev) => prev.filter((item) => item.id !== id));
-        //show success message
-        toast.success("Item has been deleted successfully");
-      })
-      .catch(() => {
-        setError("Failed to delete item");
-        toast.error("Error: Failed to delete item");
-      });
+  const deleteItem = async (id: number) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await api.delete(`/posts/${id}`);
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Item deleted successfully!");
+    } catch (err) {
+      setError("Failed to delete item.");
+      toast.error("Error: Failed to delete item.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // edit item
-  const editItem = (updatedItem: Item) => {
-    api
-      .put(`/posts/${updatedItem.id}`, updatedItem)
-      .then(() => {
-        setItems((prev) =>
-          prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-        );
-        //show success message
-        toast.success("New Item updated successfully");
-      })
-      .catch(() => {
-        setError("Failed to update item");
-        toast.error("Error: Failed to edit item");
-      });
+  const editItem = async (updatedItem: Item) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await api.put(`/posts/${updatedItem.id}`, updatedItem);
+      setItems((prev) =>
+        prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+      );
+      toast.success("Item updated successfully!");
+
+    } catch (err) {
+      setError("Failed to update item.");
+      toast.error("Error: Failed to update item.");
+
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
