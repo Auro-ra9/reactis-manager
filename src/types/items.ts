@@ -4,7 +4,6 @@ export type Items = {
   id: number; //unique identifier
   title: string;
   description: string;
-  status: "pending" | "completed"; //status of the item
   createdAt: string; // creation of the item
   updatedAt: string;
 };

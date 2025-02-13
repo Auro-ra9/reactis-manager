@@ -35,7 +35,6 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
               id: post.id,
               title: post.title,
               description: post.body,
-              status: "pending",
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             }));
@@ -55,7 +54,6 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       .then((response) => {
         const addedItem = {
           ...response.data,
-          status: "pending",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
