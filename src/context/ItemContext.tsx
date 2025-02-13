@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Items as Item, ItemsInput } from "../types/items";
 import { api } from "../config/axios";
+import toast from "react-hot-toast";
 
 type ItemContextType = {
   items: Item[]; // list of items
@@ -26,6 +27,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const fetchItems = () => {
       setIsLoading(true);
+      setError(null);
       api
         .get("/posts")
         .then((response) => {
@@ -39,8 +41,14 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
               updatedAt: new Date().toISOString(),
             }));
           setItems(transformedItems);
+          //show success message
+          toast.success(`Here you go! your list of items`);
         })
-        .catch(() => setError("Failed to fetch items"))
+        .catch(() => {
+          setError("Failed to fetch items");
+          toast.error("Error: Failed to fetch items");
+        })
+
         .finally(() => setIsLoading(false));
     };
 
@@ -58,8 +66,14 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
           updatedAt: new Date().toISOString(),
         };
         setItems((prev) => [...prev, addedItem]);
+        //show success message
+        toast.success("New Item added successfully");
       })
-      .catch(() => setError("Failed to add item"));
+
+      .catch(() => {
+        setError("Failed to add item");
+        toast.error("Error: Failed to add item");
+      });
   };
 
   // delete item
@@ -68,8 +82,13 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       .delete(`/posts/${id}`)
       .then(() => {
         setItems((prev) => prev.filter((item) => item.id !== id));
+        //show success message
+        toast.success("Item has been deleted successfully");
       })
-      .catch(() => setError("Failed to delete item"));
+      .catch(() => {
+        setError("Failed to delete item");
+        toast.error("Error: Failed to delete item");
+      });
   };
 
   // edit item
@@ -80,8 +99,13 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
         setItems((prev) =>
           prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
         );
+        //show success message
+        toast.success("New Item updated successfully");
       })
-      .catch(() => setError("Failed to update item"));
+      .catch(() => {
+        setError("Failed to update item");
+        toast.error("Error: Failed to edit item");
+      });
   };
 
   return (
