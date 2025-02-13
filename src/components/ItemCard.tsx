@@ -13,32 +13,43 @@ const ItemCard = ({ item }: ItemCardProps) => {
 
   return (
     <div
-      className={`p-4 rounded shadow-md transition-all bg-gradient-to-r from-purple-600 to-blue-600 text-white `}
+      className={`relative p-4 rounded shadow-md transition-all duration-200 bg-gradient-to-r from-blue-700 to-blue-950 text-white min-h-[200px] overflow-hidden ${
+        isExpanded ? "h-auto" : "h-[200px]"
+      } `}
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <h2 className="font-bold text-lg text-black">{item.title}</h2>
-      <p className={`mt-2 ${isExpanded ? "whitespace-normal" : "truncate"}`}>
-        {item.description}
-      </p>{" "}
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            editItem(item);
-          }}
-          className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-700 transition"
-        >
-          {isLoading ? <Spinner /> : "Edit"}
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            deleteItem(item.id);
-          }}
-          className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition"
-        >
-          {isLoading ? <Spinner /> : "Delete"}
-        </button>
+      <div className="flex flex-col h-full">
+        <div className="flex-1 min-h-0">
+          <h2 className={`font-bold text-lg text-white ${!isExpanded && 'line-clamp-1'}`}>{item.title}</h2>
+          <p
+            className={`mt-2 ${
+              !isExpanded && "line-clamp-3"
+            }`}
+          >
+            {item.description}
+          </p>{" "}
+          <div className="flex justify-end  pt-2 mt-auto border-t border-blue-600">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                alert("Edit functionality will be added soon!"); // edit functionality for future implementation
+                // editItem(item);
+              }}
+              className="px-4 py-1.5 m-2 bg-gray-600 rounded-lg hover:bg-gray-700 transition"
+            >
+              {isLoading ? <Spinner /> : "Edit"}
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteItem(item.id);
+              }}
+              className="px-4 py-1.5 m-2 bg-red-600 rounded-lg hover:bg-red-700 transition"
+            >
+              {isLoading ? <Spinner /> : "Delete"}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
