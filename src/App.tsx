@@ -1,10 +1,15 @@
-import React from "react";
 import "./App.css";
+import Home from "./pages/Home";
+import { ItemProvider } from "./context/ItemContext";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <div className="App">
-      Home Page
+    <div className="min-h-screen bg-white transition-all">
+      <ItemProvider>
+        <Toaster/>
+        <Home />
+      </ItemProvider>
     </div>
   );
 }

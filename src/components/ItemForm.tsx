@@ -9,16 +9,18 @@ const ItemForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!title || !description) {
       toast.error("complete both fields");
     }
     //pass necessary feilds to context
     addItem({ title, description });
+
     //reset the fields after each successful item add
-    toast.success("New Item added successfully")
     setTitle("");
     setDescription("");
   };
+
   return (
     <>
       <form onSubmit={handleSubmit} className="mb-4">
