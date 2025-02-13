@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useItems } from "../context/ItemContext";
+import Spinner from "./Spinner";
 
 const ItemForm = () => {
-  const { addItem } = useItems();
+  const { addItem, isLoading } = useItems();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
@@ -42,7 +43,7 @@ const ItemForm = () => {
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
-          Add
+          {isLoading ? <Spinner /> : "Add"}
         </button>
       </form>
     </>
