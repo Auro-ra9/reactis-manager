@@ -25,31 +25,30 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // fetch items
   useEffect(() => {
-    const fetchItems = () => {
+    const fetchItems = async () => {
       setIsLoading(true);
       setError(null);
-      api
-        .get("/posts")
-        .then((response) => {
-          const transformedItems = response.data
-            .slice(0, 10)
-            .map((post: any) => ({
-              id: post.id,
-              title: post.title,
-              description: post.body,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            }));
-          setItems(transformedItems);
-          //show success message
-          toast.success(`Here you go! your list of items`);
-        })
-        .catch(() => {
-          setError("Failed to fetch items");
-          toast.error("Error: Failed to fetch items");
-        })
+      try {
+        const response = await api.get("/posts");
+        const transformedItems = response.data
+          .slice(0, 10)
+          .map((post: any) => ({
+            id: post.id,
+            title: post.title,
+            description: post.body,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }));
+        //save items we fetched
+        setItems(transformedItems);
 
-        .finally(() => setIsLoading(false));
+        toast.success("Items fetched successfully!");
+      } catch (err) {
+        setError("Failed to fetch items.");
+        toast.error("Error: Failed to fetch items.");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchItems();
@@ -103,11 +102,9 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
         prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
       );
       toast.success("Item updated successfully!");
-
     } catch (err) {
       setError("Failed to update item.");
       toast.error("Error: Failed to update item.");
-
     } finally {
       setIsLoading(false);
     }
