@@ -1,11 +1,10 @@
 import React from "react";
 import "./App.css";
-import Form from "./Form.tsx";
 
 function App() {
   return (
     <div className="App">
-      <Form />
+      Home Page
     </div>
   );
 }
