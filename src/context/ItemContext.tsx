@@ -10,6 +10,8 @@ type ItemContextType = {
   addItem: (item: ItemsInput) => void; // add function
   deleteItem: (id: number) => void; // delete ""
   editItem: (id: number, updatedFields: ItemsInput) => void; // edit ""
+  sortItems: (sortKey: "title" | "updatedAt") => void;
+  filterItems: (searchTerm: string) => void;
 };
 
 // create context
@@ -117,10 +119,30 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(false);
     }
   };
+  
+  //fucntion for sort items 
+  const sortItems = (sortKey: "title" | "updatedAt") => {
+    setItems((prev) =>
+      [...prev].sort((a, b) =>
+        sortKey === "title"
+          ? a.title.localeCompare(b.title)
+          : new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+      )
+    );
+  };
+
+  //add filter
+  const filterItems = (searchTerm: string) => {
+    setItems((prev) =>
+      prev.filter((item) =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  };
 
   return (
     <ItemContext.Provider
-      value={{ items, isLoading, error, addItem, deleteItem, editItem }}
+      value={{ items, isLoading, error, addItem, deleteItem, editItem, sortItems,filterItems }}
     >
       {children}
     </ItemContext.Provider>
