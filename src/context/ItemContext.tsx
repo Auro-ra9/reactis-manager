@@ -12,6 +12,7 @@ type ItemContextType = {
   editItem: (id: number, updatedFields: ItemsInput) => void; // edit ""
   sortItems: (sortKey: "title" | "updatedAt") => void;
   filterItems: (searchTerm: string) => void;
+  filteredItems: Item[]; // list of filtered items
 };
 
 // create context
@@ -24,6 +25,8 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   const [items, setItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  //for storing the filtered only
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]);
 
   // fetch items
   useEffect(() => {
@@ -119,8 +122,8 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(false);
     }
   };
-  
-  //fucntion for sort items 
+
+  //fucntion for sort items
   const sortItems = (sortKey: "title" | "updatedAt") => {
     setItems((prev) =>
       [...prev].sort((a, b) =>
@@ -133,16 +136,30 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
 
   //add filter
   const filterItems = (searchTerm: string) => {
-    setItems((prev) =>
-      prev.filter((item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
+    if (!searchTerm) {
+      toast.error("The term you are searching for is not available");
+    } else {
+      setFilteredItems((items) =>
+        items.filter((item) =>
+          item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
   };
 
   return (
     <ItemContext.Provider
-      value={{ items, isLoading, error, addItem, deleteItem, editItem, sortItems,filterItems }}
+      value={{
+        items,
+        filteredItems,// pass filtered items seperately for better query
+        isLoading,
+        error,
+        addItem,
+        deleteItem,
+        editItem,
+        sortItems,
+        filterItems,
+      }}
     >
       {children}
     </ItemContext.Provider>
