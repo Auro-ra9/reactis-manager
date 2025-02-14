@@ -9,7 +9,7 @@ type ItemContextType = {
   error: string | null;
   addItem: (item: ItemsInput) => void; // add function
   deleteItem: (id: number) => void; // delete ""
-  editItem: (item: Item) => void; // edit ""
+  editItem: (id: number, updatedFields: ItemsInput) => void; // edit ""
 };
 
 // create context
@@ -66,9 +66,12 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
         updatedAt: new Date().toISOString(),
       };
       // Add the new item and sort by updatedAt (most recent first)
-      setItems((prev) => [addedItem,...prev].sort(
-        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-      ));
+      setItems((prev) =>
+        [addedItem, ...prev].sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        )
+      );
       toast.success("New item added successfully!");
     } catch (err) {
       setError("Failed to add item.");
@@ -96,13 +99,15 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // edit item
-  const editItem = async (updatedItem: Item) => {
+  const editItem = async (id: number, updatedFields: ItemsInput) => {
     setIsLoading(true);
     setError(null);
     try {
-      await api.put(`/posts/${updatedItem.id}`, updatedItem);
+      await api.put(`/posts/${id}`, updatedFields);
       setItems((prev) =>
-        prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+        prev.map((item) =>
+          item.id === id ? { ...item, ...updatedFields } : item
+        )
       );
       toast.success("Item updated successfully!");
     } catch (err) {
