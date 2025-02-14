@@ -65,7 +65,10 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      setItems((prev) => [...prev, addedItem]);
+      // Add the new item and sort by updatedAt (most recent first)
+      setItems((prev) => [addedItem,...prev].sort(
+        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      ));
       toast.success("New item added successfully!");
     } catch (err) {
       setError("Failed to add item.");
