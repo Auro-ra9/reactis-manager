@@ -125,25 +125,42 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
 
   //fucntion for sort items
   const sortItems = (sortKey: "title" | "updatedAt") => {
-    setItems((prev) =>
-      [...prev].sort((a, b) =>
-        sortKey === "title"
-          ? a.title.localeCompare(b.title)
-          : new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-      )
-    );
+    try {
+      setItems((prev) =>
+        [...prev].sort((a, b) =>
+          sortKey === "title"
+            ? a.title.localeCompare(b.title)
+            : new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        )
+      );
+      toast.success(
+        `Items sorted by ${sortKey === "title" ? "title" : "date"}`
+      );
+    } catch (error) {
+      toast.error("Failed to sort items. Please try again.");
+    }
   };
 
   //add filter
   const filterItems = (searchTerm: string) => {
-    if (!searchTerm) {
-      toast.error("The term you are searching for is not available");
-    } else {
-      setFilteredItems((items) =>
-        items.filter((item) =>
-          item.title.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+    try {
+      if (!searchTerm) {
+        toast.dismiss("Showing all items");
+        return;
+      }
+      const filtered = items.filter((item) =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
+
+      if (filtered.length === 0) {
+        toast.error("No items match your search");
+      } else {
+        setFilteredItems(filtered);
+        toast.success(`Found ${filtered.length} matching items`);
+      }
+    } catch (error) {
+      toast.error("Failed to filter items. Please try again.");
+      setFilteredItems(items);
     }
   };
 
@@ -151,7 +168,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({
     <ItemContext.Provider
       value={{
         items,
-        filteredItems,// pass filtered items seperately for better query
+        filteredItems, // pass filtered items seperately for better query
         isLoading,
         error,
         addItem,
