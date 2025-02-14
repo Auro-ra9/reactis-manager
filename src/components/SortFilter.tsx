@@ -1,45 +1,34 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useItems } from "../context/ItemContext";
 
 const SortFilter = () => {
   const { sortItems, filterItems } = useItems();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSort = (key: "title" | "updatedAt") => {
-    sortItems(key);
-  };
-
   const handleFilter = () => {
     filterItems(searchTerm);
+    setSearchTerm("")// clear input after search
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-wrap items-center gap-2">
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search by title..."
-        className="p-2 border border-gray-300 rounded-lg"
+        className="flex-1 min-w-[150px] p-2 rounded-3xl border border-white/20 placeholder-gray-300 bg-transparent outline-none "
       />
-      <button
-        onClick={handleFilter}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-      >
+      <button onClick={handleFilter} className="p-2 ">
         Filter
       </button>
-      <button
-        onClick={() => handleSort("title")}
-        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+      <select
+        onChange={(e) => sortItems(e.target.value as "title" | "updatedAt")}
+        className="p-2 rounded-2xl bg-cyan-600 text-white cursor-pointer hover:bg-cyan-800"
       >
-        Sort by Title
-      </button>
-      <button
-        onClick={() => handleSort("updatedAt")}
-        className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-      >
-        Sort by Date
-      </button>
+        <option value="updatedAt">Sort by Date</option>
+        <option value="title">Sort by Title</option>
+      </select>
     </div>
   );
 };
